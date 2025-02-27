@@ -1,32 +1,43 @@
+import os
 from huggingface_hub import hf_hub_download
 from ultralytics import YOLO
 from supervision import Detections
 from PIL import Image
 import numpy as np
 
-# Download YOLOv8 face detection model
 model_path = hf_hub_download(repo_id="arnabdhar/YOLOv8-Face-Detection", filename="model.pt")
 
-# Load the model
 model = YOLO(model_path)
 
-# Define input image path
-image_path = "/Users/bappa123/Desktop/Screenshot 2025-02-27 at 1.14.05 PM.png"
+input_dir = ""  
+output_dir = ""
+os.makedirs(output_dir, exist_ok=True)  
+for filename in os.listdir(input_dir):
+    if filename.lower().endswith((".png", ".jpg", ".jpeg")): 
+        image_path = os.path.join(input_dir, filename)
+        
+        image = Image.open(image_path)
 
-# Load image
-image = Image.open(image_path)
+        output = model(image)
 
-# Run inference
-output = model(image)
+        results = Detections.from_ultralytics(output[0])
 
-results = Detections.from_ultralytics(output[0])
+        bounding_boxes = output[0].boxes.xywh.cpu().numpy()  
 
-image_with_detections = output[0].plot()
+        output_image_path = os.path.join(output_dir, f"output_{filename}")
+        output_txt_path = os.path.join(output_dir, f"bounding_boxes_{os.path.splitext(filename)[0]}.txt")
 
-image_pil = Image.fromarray(image_with_detections.astype(np.uint8))
+        with open(output_txt_path, "w") as f:
+            for bbox in bounding_boxes:
+                x, y, w, h = bbox  
+                f.write(f"{image_path} -> {x} {y} {w} {h}\n")
 
-output_path = "/Users/bappa123/Desktop/output.png"
+        print(f"Saved bounding box coordinates for {filename} at: {output_txt_path}")
 
-image_pil.save(output_path)
+        image_with_detections = output[0].plot()
 
-print(f"Saved output image at: {output_path}")
+        image_pil = Image.fromarray(image_with_detections.astype(np.uint8))
+
+        image_pil.save(output_image_path)
+
+        print(f"Saved output image for {filename} at: {output_image_path}")
