@@ -4,7 +4,7 @@
 import cv2
 
 
-def main():
+def sunglass_occlusion():
     # Load the sunglasses image with alpha channel (transparency)
     sunglass_image = cv2.imread(
         "D:\Face_occluded Pipeline\Occluded-dataset-pipeline\sunglasses.png",
@@ -56,4 +56,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    sunglass_occlusion()
