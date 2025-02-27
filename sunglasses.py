@@ -2,7 +2,7 @@ import cv2
 import os
 
 # Load the sunglasses image with alpha channel
-sunglass_path = r"sunglasses.png"
+sunglass_path = r"sunglasses.png" 
 sunglass_image = cv2.imread(sunglass_path, cv2.IMREAD_UNCHANGED)
 
 # Load the pre-trained face detection model
