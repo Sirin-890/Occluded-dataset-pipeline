@@ -46,3 +46,6 @@ for filename in os.listdir(input_dir):
             cv2.imwrite(output_path, image)
 
 print(f"Processing complete. Check the {output_dir} directory.")
+
+def blackbox_10():
+    pass
