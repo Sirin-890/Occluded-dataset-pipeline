@@ -1,5 +1,6 @@
-from MaskTheFace import *
+from MaskTheFace.mask_the_face import *
 from face_detection import face_detection_crop
 from occlusion_blackbox.sunglasses import sunglass_occlusion
-from occlusion_blackbox.percent_ten import blackbox_10
+from occlusion_blackbox.percent_ten import percent_ten_blackbox_single
+
 
