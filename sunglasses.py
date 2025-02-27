@@ -52,7 +52,7 @@ def main():
 
     cv2.imwrite("output_image3.jpg", destination_image)
 
-    print("Sunglass attached! Check 'output_image.jpg'.")
+    print("Sunglass attached!")
 
 
 if __name__ == "__main__":
