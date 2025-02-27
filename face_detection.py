@@ -19,19 +19,14 @@ image = Image.open(image_path)
 # Run inference
 output = model(image)
 
-# Convert results to Detections format
 results = Detections.from_ultralytics(output[0])
 
-# Draw detections on the image (returns a NumPy array)
 image_with_detections = output[0].plot()
 
-# Convert NumPy array to PIL image
 image_pil = Image.fromarray(image_with_detections.astype(np.uint8))
 
-# Define output path
 output_path = "/Users/bappa123/Desktop/output.png"
 
-# Save the processed image
 image_pil.save(output_path)
 
 print(f"Saved output image at: {output_path}")
