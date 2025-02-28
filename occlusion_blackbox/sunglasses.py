@@ -4,15 +4,15 @@ from loguru import logger
 
 
 
-def sunglass_occlusion(image_path, x, y, w, h, sunglass_path):
+def sunglass_occlusion(image, x, y, w, h, sunglass_path):
     """
     Overlays sunglasses onto the specified face region in a single image and returns the modified image.
     """
-    image = cv2.imread(image_path)
+    #image = cv2.imread(image_path)
     sunglass_image = cv2.imread(sunglass_path, cv2.IMREAD_UNCHANGED)
     
     if image is None:
-        logger.error(f"Error loading image: {image_path}")
+        logger.error(f"Error loading image: ")
         return None
     if sunglass_image is None:
         logger.error(f"Error loading sunglasses image: {sunglass_path}")

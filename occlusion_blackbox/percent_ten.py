@@ -3,13 +3,13 @@ import random
 import numpy as np
 from loguru import logger
 
-def percent_ten_blackbox_single(image_path, x, y, w, h):
+def percent_ten_blackbox_single(image, x, y, w, h):
     """
     Applies a 10% black patch to a specified face region in a single image and returns the modified image.
     """
-    image = cv2.imread(image_path)
+    #image = cv2.imread(image_path)
     if image is None:
-        logger.error(f"Error loading image: {image_path}")
+        logger.error(f"Error loading image: ")
         return None
     
     face_area = w * h
