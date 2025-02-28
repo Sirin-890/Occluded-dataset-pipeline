@@ -6,14 +6,14 @@ from PIL import Image
 import numpy as np
 from loguru import logger
 
-def face_detection_crop(image_path):
+def face_detection_crop(image):
     """
     Detects a face in a single image, crops it, and returns the cropped face image.
     """
     model_path = hf_hub_download(repo_id="arnabdhar/YOLOv8-Face-Detection", filename="model.pt")
     model = YOLO(model_path)
     
-    image = Image.open(image_path)
+    #image = Image.open(image_path)
     output = model(image)
     results = Detections.from_ultralytics(output[0])
     bounding_boxes = output[0].boxes.xywh.cpu().numpy()
