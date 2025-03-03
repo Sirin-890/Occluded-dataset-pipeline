@@ -2,8 +2,9 @@ import cv2
 import random
 import numpy as np
 from loguru import logger
+from PIL import Image
 
-def percent_blackbox_single(image, x, y, w, h, occlusion_percent=10):
+def percent_ten_blackbox_single(image, x, y, w, h, occlusion_percent=10):
     """
     Applies a specified percentage of black patch occlusion to a face region in a single image.
     
@@ -21,6 +22,11 @@ def percent_blackbox_single(image, x, y, w, h, occlusion_percent=10):
     if image is None:
         logger.error("Error loading image")
         return None
+    image_np = np.array(image)
+
+    
+    if len(image_np.shape) == 2:  
+        image_np = cv2.cvtColor(image_np, cv2.COLOR_GRAY2RGB)
     
     face_area = w * h
     patch_area = int((occlusion_percent / 100) * face_area)  
@@ -29,12 +35,19 @@ def percent_blackbox_single(image, x, y, w, h, occlusion_percent=10):
     patch_w = int((patch_area * aspect_ratio) ** 0.5)
     patch_h = int((patch_area / aspect_ratio) ** 0.5)
 
-    patch_w = min(patch_w, w)
-    patch_h = min(patch_h, h)
+    patch_w = int(min(patch_w, w))
+    patch_h = int(min(patch_h, h))
 
-    patch_x = random.randint(x, x + w - patch_w)
-    patch_y = random.randint(y, y + h - patch_h)
+    patch_x = random.randint(int(x), int(x + w - patch_w))
+    patch_y = random.randint(int(y), int(y + h - patch_h))
+    #logger.error(patch_h,patch_w,patch_x,patch_y)
+    logger.error(image_np)
 
-    image[patch_y:patch_y + patch_h, patch_x:patch_x + patch_w] = (0, 0, 0)
-    
-    return image
+    image_np[patch_y:patch_y + patch_h, patch_x:patch_x + patch_w] = (0, 0, 0)
+    logger.error(image_np)
+
+    image_pil = Image.fromarray(image_np)
+
+    logger.debug("Photo ready with occlusion")
+
+    return image_pil
