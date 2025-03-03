@@ -3,6 +3,9 @@ import random
 import numpy as np
 from loguru import logger
 from PIL import Image
+import csv
+output_csv='result.csv'
+output2_csv='result2.csv'
 
 def percent_ten_blackbox_single(image, x, y, w, h, occlusion_percent=10):
     """
@@ -40,11 +43,20 @@ def percent_ten_blackbox_single(image, x, y, w, h, occlusion_percent=10):
 
     patch_x = random.randint(int(x), int(x + w - patch_w))
     patch_y = random.randint(int(y), int(y + h - patch_h))
-    #logger.error(patch_h,patch_w,patch_x,patch_y)
+    logger.error(patch_h)
+    logger.error(patch_y)
+    logger.error(patch_x)
+    logger.error(patch_w)
     logger.error(image_np)
+    image_np_flat=image_np.reshape(-1,image_np.shape[-1])
+    np.savetxt(output_csv,image_np_flat,delimiter=",",fmt="%d")
+    cv2.rectangle(image_np, (patch_x, patch_y), (patch_x + patch_w, patch_y + patch_h), (0, 0, 0), -1)
 
-    image_np[patch_y:patch_y + patch_h, patch_x:patch_x + patch_w] = (0, 0, 0)
-    logger.error(image_np)
+    #image_np[patch_y:patch_y + patch_h, patch_x:patch_x + patch_w,:] = 0
+    #image2_np_flat=image_np.reshape(-1,image_np.shape[-1])
+
+    #np.savetxt(output2_csv,image2_np_flat,delimiter=",",fmt="%d")
+    #logger.error(image_np)
 
     image_pil = Image.fromarray(image_np)
 
