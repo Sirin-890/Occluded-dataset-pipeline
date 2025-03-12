@@ -25,9 +25,10 @@ def black(input_dir,output_dir_black,percent):
                     continue
                 else:
                     logger.info("photo found")
-                croped,x,y,w,h=face_detection_crop(image)
-                black_image=percent_ten_blackbox_single(croped,x,y,w,h,percent)
-                black_image.save(output_path)
+                x,y,w,h=face_detection_crop(img_path,output_path)
+                #croped.save(output_path)
+                percent_ten_blackbox_single(output_path,percent)
+                
                 #cv2.imwrite(output_path, black_image)
                 logger.info(f"Processed and saved: {output_path}")
 
