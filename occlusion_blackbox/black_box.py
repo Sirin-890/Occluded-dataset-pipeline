@@ -7,59 +7,41 @@ import csv
 output_csv='result.csv'
 output2_csv='result2.csv'
 
-def percent_ten_blackbox_single(image, x, y, w, h, occlusion_percent=10):
-    """
-    Applies a specified percentage of black patch occlusion to a face region in a single image.
+def percent_ten_blackbox_single(img_path, occlusion_percent):
+    # Read the image
+    img = cv2.imread(img_path)
+    if img is None:
+        raise FileNotFoundError(f"Image not found at path: {img_path}")
+
+    h, w, _ = img.shape
     
-    Args:
-        image (numpy array): The input image.
-        x (int): X-coordinate of the face bounding box.
-        y (int): Y-coordinate of the face bounding box.
-        w (int): Width of the face bounding box.
-        h (int): Height of the face bounding box.
-        occlusion_percent (float): Percentage of the face area to be occluded.
+    # Calculate occlusion area size based on percentage
+    total_area = h * w
+    occlusion_area = int(total_area * (occlusion_percent / 100))
     
-    Returns:
-        numpy array: The modified image with occlusion.
-    """
-    if image is None:
-        logger.error("Error loading image")
-        return None
-    image_np = np.array(image)
-
+    occluded_area = 0
     
-    if len(image_np.shape) == 2:  
-        image_np = cv2.cvtColor(image_np, cv2.COLOR_GRAY2RGB)
-    
-    face_area = w * h
-    patch_area = int((occlusion_percent / 100) * face_area)  
+    while occluded_area < occlusion_area:
+        # Randomly choose the size of the occlusion block
+        block_w = random.randint(10, min(100, w // 4))
+        block_h = random.randint(10, min(100, h // 4))
+        
+        # Ensure we don't exceed the target occlusion area
+        if occluded_area + (block_w * block_h) > occlusion_area:
+            break
+        
+        # Random position for the block
+        x = random.randint(0, w - block_w)
+        y = random.randint(0, h - block_h)
+        
+        # Fill the block with black
+        img[y:y + block_h, x:x + block_w] = (0, 0, 0)
+        occluded_area += (block_w * block_h)
 
-    aspect_ratio = random.uniform(0.5, 2.0)
-    patch_w = int((patch_area * aspect_ratio) ** 0.5)
-    patch_h = int((patch_area / aspect_ratio) ** 0.5)
+    # Save the modified image back to the original path
+    cv2.imwrite(img_path, img)
 
-    patch_w = int(min(patch_w, w))
-    patch_h = int(min(patch_h, h))
-
-    patch_x = random.randint(int(x), int(x + w - patch_w))
-    patch_y = random.randint(int(y), int(y + h - patch_h))
-    logger.error(patch_h)
-    logger.error(patch_y)
-    logger.error(patch_x)
-    logger.error(patch_w)
-    logger.error(image_np)
-    image_np_flat=image_np.reshape(-1,image_np.shape[-1])
-    np.savetxt(output_csv,image_np_flat,delimiter=",",fmt="%d")
-    cv2.rectangle(image_np, (patch_x, patch_y), (patch_x + patch_w, patch_y + patch_h), (0, 0, 0), -1)
-
-    #image_np[patch_y:patch_y + patch_h, patch_x:patch_x + patch_w,:] = 0
-    #image2_np_flat=image_np.reshape(-1,image_np.shape[-1])
-
-    #np.savetxt(output2_csv,image2_np_flat,delimiter=",",fmt="%d")
-    #logger.error(image_np)
-
-    image_pil = Image.fromarray(image_np)
-
-    logger.debug("Photo ready with occlusion")
-
-    return image_pil
+    # Optionally show the result
+    cv2.imshow('Occluded Image', img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
