@@ -48,9 +48,10 @@ def apply_glasses(input_dir, output_dir_glasses, sunglass_image_path):
                 if face_img is None:
                     logger.error(f"Skipping invalid image: {img_path}")
                     continue
-                
-                processed_img = apply_sunglasses(face_img, sunglass_image_path)
-                cv2.imwrite(output_path, processed_img)
+                x,y,w,h=face_detection_crop(img_path,output_path)
+                #croped.save(output_path)
+                apply_sunglasses(output_path, sunglass_image_path)
+                #cv2.imwrite(output_path, processed_img)
                 
                 logger.info(f"Processed and saved: {output_path}")
 

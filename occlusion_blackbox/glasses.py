@@ -3,7 +3,8 @@ import cvzone
 import os
 import dlib
 
-def apply_sunglasses(face_image, overlay_path):
+def apply_sunglasses(face_image_path, overlay_path):
+    face_image=cv2.imread(face_image_path)
     """
     Overlays sunglasses on the given cropped face image using eye detection.
     
@@ -55,8 +56,9 @@ def apply_sunglasses(face_image, overlay_path):
         
         # Overlay sunglasses
         face_image = cvzone.overlayPNG(face_image, overlay_resized, [x, y])
+        cv2.imwrite(face_image_path,face_image)
     
-    return face_image
+    #return face_image
 
 # Example usage
 if __name__ == "__main__":
