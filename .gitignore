@@ -1,2 +1,4 @@
 # Ignore virtual environments
 bappa_data/
+__pycache__/
+jbjm_arpita_ke_chasme/

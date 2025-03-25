@@ -45,9 +45,11 @@ def glasses(input_dir,output_dir_glasses,sunglass_image_path):
                 if image is None:
                     logger.error(f"Skipping invalid image: {img_path}")
                     continue
-                croped,x,y,w,h=face_detection_crop(image)
-                glasses_image=sunglass_occlusion(croped,x,y,w,h,sunglass_image_path)
-                cv2.imwrite(output_path, glasses_image)
+                else:
+                    logger.info("photo found")
+                x,y,w,h=face_detection_crop(img_path,output_path)
+                sunglass_occlusion(output_path,sunglass_image_path)
+                #cv2.imwrite(output_path, glasses_image)
                 logger.info(f"Processed and saved: {output_path}")
 # def mask(input_dir,output_dir_mask):
 #     for root, _, files in os.walk(input_dir):
