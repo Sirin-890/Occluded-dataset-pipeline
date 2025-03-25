@@ -2,6 +2,7 @@
 from face_detection import face_detection_crop
 from occlusion_blackbox.sunglasses import sunglass_occlusion
 from occlusion_blackbox.black_box import percent_ten_blackbox_single
+from occlusion_blackbox.glasses import apply_sunglasses
 from loguru import logger
 import argparse
 from PIL import Image
@@ -31,26 +32,45 @@ def black(input_dir,output_dir_black,percent):
                 
                 #cv2.imwrite(output_path, black_image)
                 logger.info(f"Processed and saved: {output_path}")
-
-def glasses(input_dir,output_dir_glasses,sunglass_image_path):
+                
+def apply_glasses(input_dir, output_dir_glasses, sunglass_image_path):
+    logger.info(f"Starting sunglasses occlusion on {input_dir}")
+    
     for root, _, files in os.walk(input_dir):
         for file in files:
-            if file.lower().endswith(('.png', '.jpg', '.jpeg')):
+            if file.lower().endswith((".png", ".jpg", ".jpeg")):
                 img_path = os.path.join(root, file)
                 output_path = os.path.join(output_dir_glasses, os.path.relpath(img_path, input_dir))
 
                 os.makedirs(os.path.dirname(output_path), exist_ok=True)
-                #image=cv2.imread(img_path)
-                image = Image.open(img_path)
-                if image is None:
+                face_img = cv2.imread(img_path)
+                
+                if face_img is None:
                     logger.error(f"Skipping invalid image: {img_path}")
                     continue
-                else:
-                    logger.info("photo found")
-                x,y,w,h=face_detection_crop(img_path,output_path)
-                sunglass_occlusion(output_path,sunglass_image_path)
-                #cv2.imwrite(output_path, glasses_image)
+                
+                processed_img = apply_sunglasses(face_img, sunglass_image_path)
+                cv2.imwrite(output_path, processed_img)
+                
                 logger.info(f"Processed and saved: {output_path}")
+
+# def glasses(input_dir,output_dir_glasses,sunglass_image_path):
+#     for root, _, files in os.walk(input_dir):
+#         for file in files:
+#             if file.lower().endswith(('.png', '.jpg', '.jpeg')):
+#                 img_path = os.path.join(root, file)
+#                 output_path = os.path.join(output_dir_glasses, os.path.relpath(img_path, input_dir))
+
+#                 os.makedirs(os.path.dirname(output_path), exist_ok=True)
+#                 #image=cv2.imread(img_path)
+#                 image = Image.open(img_path)
+#                 if image is None:
+#                     logger.error(f"Skipping invalid image: {img_path}")
+#                     continue
+#                 croped,x,y,w,h=face_detection_crop(image)
+#                 glasses_image=sunglass_occlusion(croped,x,y,w,h,sunglass_image_path)
+#                 cv2.imwrite(output_path, glasses_image)
+#                 logger.info(f"Processed and saved: {output_path}")
 # def mask(input_dir,output_dir_mask):
 #     for root, _, files in os.walk(input_dir):
 #         for file in files:
@@ -103,10 +123,10 @@ if __name__ == "__main__":
     #     help="output masks directory of images",
     # )
     parser.add_argument(
-        "--glass_image_path",
-        type=str,
-        default="",
-        help="input of glass  images",
+        "--glass_image_path", 
+        type=str, 
+        required=True, 
+        help="Path to sunglasses image"
     )
     parser.add_argument(
         "--percent",
@@ -119,8 +139,6 @@ if __name__ == "__main__":
         type=int,
         default=4,
         help="which type of dataset",
-
-
     )
     args = parser.parse_args()
     print(f"Input directory received: {args.path}")  # Debugging statement
@@ -135,11 +153,11 @@ if __name__ == "__main__":
 
         black(args.path,args.output_blackbox_path,args.percent)
     elif args.whichtype==2:
-        glasses(args.path,args.output_glasses_path,args.glass_image_path)
+        apply_glasses(args.path,args.output_glasses_path,args.glass_image_path)
     #elif args.whichtype==3:
 
        #mask(args.path,args.output_mask_path)
     else:
         black(args.path,args.output_blackbox_path,args.percent)
-        glasses(args.path,args.output_glasses_path,args.glass_image_path)
+        apply_glasses(args.path,args.output_glasses_path,args.glass_image_path)
         #mask(args.path,args.output_mask_path)
