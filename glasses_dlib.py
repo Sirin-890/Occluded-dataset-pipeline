@@ -4,22 +4,13 @@ import os
 import dlib
 
 def apply_sunglasses(face_image, overlay_path):
-    """
-    Overlays sunglasses on the given cropped face image using eye detection.
     
-    Parameters:
-    face_image (numpy.ndarray): Cropped face image.
-    overlay_path (str): Path to the sunglasses image (with transparency).
     
-    Returns:
-    numpy.ndarray: Face image with sunglasses overlay.
-    """
-    # Load sunglasses overlay
     overlay = cv2.imread(overlay_path, cv2.IMREAD_UNCHANGED)
     if overlay is None:
         raise FileNotFoundError(f"Error: '{overlay_path}' not found.")
     
-    # Convert image to grayscale for eye detection
+    
     gray = cv2.cvtColor(face_image, cv2.COLOR_BGR2GRAY)
     
     # Load Dlib's face landmark predictor
