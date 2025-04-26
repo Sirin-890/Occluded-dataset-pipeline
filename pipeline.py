@@ -1,7 +1,7 @@
 #from MaskTheFace.mask_the_face_fun import process_image
 from face_detection import face_detection_crop
 from occlusion_blackbox.sunglasses import sunglass_occlusion
-from occlusion_blackbox.black_box import percent_ten_blackbox_single,skin_colour
+from occlusion_blackbox.black_box_skin_occ import percent_ten_blackbox_single,skin_colour
 from occlusion_blackbox.glasses import apply_sunglasses
 from loguru import logger
 import argparse

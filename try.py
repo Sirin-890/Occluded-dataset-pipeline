@@ -1,1 +1,1 @@
-from occlusion_blackbox.black_box import percent_ten_blackbox_single
+from occlusion_blackbox.black_box_skin_occ import percent_ten_blackbox_single
