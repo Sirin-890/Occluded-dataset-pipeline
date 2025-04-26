@@ -165,9 +165,9 @@ if __name__ == "__main__":
         help="which type of dataset",
     )
     args = parser.parse_args()
-    print(f"Input directory received: {args.path}")  # Debugging statement
-    print(f"Output directory for blackbox: {args.output_blackbox_path}")  # Debugging statement
-    print(f"Selected type: {args.whichtype}")  # Debugging statement
+    logger.debug(f"Input directory received: {args.path}")  # Debugging statement
+    logger.debug(f"Output directory for blackbox: {args.output_blackbox_path}")  # Debugging statement
+    logger.debug(f"Selected type: {args.whichtype}")  # Debugging statement
 
     if not os.path.exists(args.path):
         logger.error("Error: The input directory does not exist.")

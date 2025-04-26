@@ -2,6 +2,7 @@ import cv2
 import cvzone
 import os
 import dlib
+from loguru import logger
 
 def apply_sunglasses(face_image_path, overlay_path):
     face_image=cv2.imread(face_image_path)
@@ -22,7 +23,7 @@ def apply_sunglasses(face_image_path, overlay_path):
     
     faces = detector(gray)
     if len(faces) == 0:
-        print("No faces detected!")
+        logger.error("No faces detected!")
         return face_image
     
     for face in faces:
