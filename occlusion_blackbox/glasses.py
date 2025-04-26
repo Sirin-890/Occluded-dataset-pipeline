@@ -5,30 +5,21 @@ import dlib
 
 def apply_sunglasses(face_image_path, overlay_path):
     face_image=cv2.imread(face_image_path)
-    """
-    Overlays sunglasses on the given cropped face image using eye detection.
     
-    Parameters:
-    face_image (numpy.ndarray): Cropped face image.
-    overlay_path (str): Path to the sunglasses image (with transparency).
     
-    Returns:
-    numpy.ndarray: Face image with sunglasses overlay.
-    """
-    # Load sunglasses overlay
     overlay = cv2.imread(overlay_path, cv2.IMREAD_UNCHANGED)
     if overlay is None:
         raise FileNotFoundError(f"Error: '{overlay_path}' not found.")
     
-    # Convert image to grayscale for eye detection
+    
     gray = cv2.cvtColor(face_image, cv2.COLOR_BGR2GRAY)
     
-    # Load Dlib's face landmark predictor
-    predictor_path = "bappa_data/lib/python3.7/site-packages/face_recognition_models/models/shape_predictor_68_face_landmarks.dat"  # Ensure this file exists
+   
+    predictor_path = "occlusion_blackbox/shape_predictor_68_face_landmarks.dat"  # Ensure this file exists
     detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor(predictor_path)
     
-    # Detect faces (for landmark detection)
+    
     faces = detector(gray)
     if len(faces) == 0:
         print("No faces detected!")
@@ -37,28 +28,28 @@ def apply_sunglasses(face_image_path, overlay_path):
     for face in faces:
         landmarks = predictor(gray, face)
         
-        # Get eye coordinates (landmarks 36-45 are for eyes)
+        
         left_eye_x = (landmarks.part(36).x + landmarks.part(39).x) // 2
         left_eye_y = (landmarks.part(36).y + landmarks.part(39).y) // 2
         right_eye_x = (landmarks.part(42).x + landmarks.part(45).x) // 2
         right_eye_y = (landmarks.part(42).y + landmarks.part(45).y) // 2
         
-        # Calculate width and height for sunglasses
-        width = int(2 * (right_eye_x - left_eye_x))  # Adjust width
-        height = int(width * 1.2)  # Keep aspect ratio
         
-        # Resize sunglasses
+        width = int(2 * (right_eye_x - left_eye_x))  
+        height = int(width * 1.2) 
+        
+        
         overlay_resized = cv2.resize(overlay, (width, height))
         
-        # Determine placement position
-        x = left_eye_x - int(width * 0.3)  # Adjust for positioning
+        
+        x = left_eye_x - int(width * 0.3)  
         y = left_eye_y - int(height * 0.5)
         
-        # Overlay sunglasses
+       
         face_image = cvzone.overlayPNG(face_image, overlay_resized, [x, y])
         cv2.imwrite(face_image_path,face_image)
     
-    #return face_image
+    
 
 # Example usage
 if __name__ == "__main__":
