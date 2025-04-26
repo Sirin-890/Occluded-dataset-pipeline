@@ -1,7 +1,7 @@
 #from MaskTheFace.mask_the_face_fun import process_image
 from face_detection import face_detection_crop
 from occlusion_blackbox.sunglasses import sunglass_occlusion
-from occlusion_blackbox.black_box import percent_ten_blackbox_single
+from occlusion_blackbox.black_box import percent_ten_blackbox_single,skin_colour
 from occlusion_blackbox.glasses import apply_sunglasses
 from loguru import logger
 import argparse
@@ -29,6 +29,29 @@ def black(input_dir,output_dir_black,percent):
                 x,y,w,h=face_detection_crop(img_path,output_path)
                 #croped.save(output_path)
                 percent_ten_blackbox_single(output_path,percent)
+                
+                #cv2.imwrite(output_path, black_image)
+                logger.info(f"Processed and saved: {output_path}")
+def skin(input_dir,output_dir_black,percent):
+    print(f"Starting blackbox occlusion on {input_dir} with {percent}% occlusion")
+    logger.info(f"Starting blackbox occlusion on {input_dir} with {percent}% occlusion") 
+    for root, _, files in os.walk(input_dir):
+        for file in files:
+            if file.lower().endswith(('.png', '.jpg', '.jpeg')):
+                img_path = os.path.join(root, file)
+                output_path = os.path.join(output_dir_black, os.path.relpath(img_path, input_dir))
+
+                os.makedirs(os.path.dirname(output_path), exist_ok=True)
+                #image=cv2.imread(img_path)
+                image = Image.open(img_path)
+                if image is None:
+                    logger.error(f"Skipping invalid image: {img_path}")
+                    continue
+                else:
+                    logger.info("photo found")
+                x,y,w,h=face_detection_crop(img_path,output_path)
+                #croped.save(output_path)
+                skin_colour(output_path,percent)
                 
                 #cv2.imwrite(output_path, black_image)
                 logger.info(f"Processed and saved: {output_path}")
@@ -155,7 +178,8 @@ if __name__ == "__main__":
         black(args.path,args.output_blackbox_path,args.percent)
     elif args.whichtype==2:
         apply_glasses(args.path,args.output_glasses_path,args.glass_image_path)
-    #elif args.whichtype==3:
+    elif args.whichtype==3:
+        skin(args.path,args.output_blackbox_path,args.percent)
 
        #mask(args.path,args.output_mask_path)
     else:
